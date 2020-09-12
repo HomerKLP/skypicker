@@ -16,4 +16,4 @@ RUN python manage.py migrate
 
 EXPOSE 8000
 
-CMD [ "gunicorn", "-b 0.0.0.0:8000", "--workers=4", "sirius.wsgi" ]
+CMD [ "gunicorn", "-b 0.0.0.0:8000", "--workers=4", "skypicker.wsgi" ]
