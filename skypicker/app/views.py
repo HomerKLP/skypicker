@@ -1,10 +1,12 @@
 # Vendor
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
+from rest_framework.mixins import ListModelMixin
+# Local
+from .serializers import FlightSerializer
+from .models import Flight
 
 
-
-class SkyPicker(ModelViewSet):
-    def get(self, request, *args, **kwargs):
-
-        return Response()
+class SkyPickerViewset(ListModelMixin, GenericViewSet):
+    """Базовый вьюсет для рейсов"""
+    serializer_class = FlightSerializer
+    queryset = Flight.objects.all().order_by('price')

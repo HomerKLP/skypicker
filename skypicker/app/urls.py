@@ -7,7 +7,7 @@ from . import views
 urlpatterns = [
     path(
         'flights/',
-        views.SkyPicker.as_view({'get': 'get'}),
+        views.SkyPickerViewset.as_view({'get': 'list'}),
         name='flights'
     ),
 ]
