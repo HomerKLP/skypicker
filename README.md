@@ -3,7 +3,7 @@
 ## Инструкция по запуску
 - Клонируем проект:
 ```
-git@github.com:HomerKLP/skypicker.git
+git clone git@github.com:HomerKLP/skypicker.git
 ```
 
 - Переходим в директорию и билдим компоуз файл:
