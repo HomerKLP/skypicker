@@ -109,10 +109,20 @@ CACHES = {
 }
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
+CACHE_TTL = 15
 
 # RestFramework
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS':
         'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 100
+    'PAGE_SIZE': 100,
+    'EXCEPTION_HANDLER':
+        'skypicker.app.exceptions.custom_exception_handler',
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ]
 }
+
+# Ext Api
+FLIGHTS_URL = 'https://api.skypicker.com/flights'
+CHECK_FLIGHT_URL = 'https://booking-api.skypicker.com/api/v0.1/check_flights'

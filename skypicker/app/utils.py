@@ -1,7 +1,13 @@
 # Vendor
 from django.db.transaction import atomic
+from django.conf import settings
+from rest_framework.exceptions import APIException
+import logging
 # Local
 from .models import Flight, Airline
+from .requests import perform_request
+
+logger = logging.getLogger(__name__)
 
 
 def get_airlines(airlines: list) -> list:
@@ -15,7 +21,7 @@ def get_airlines(airlines: list) -> list:
     return airline_ids
 
 
-def create_flight(payload):
+def create_flight(payload: dict):
     """Создать рейс"""
     with atomic():
         airlines = payload.pop('airlines')
@@ -24,7 +30,7 @@ def create_flight(payload):
         flight_instance.airlines.set(airline_ids)
 
 
-def update_flight(instance, payload):
+def update_flight(instance, payload: dict):
     """Обновить данные рейса"""
     with atomic():
         airlines = payload.pop('airlines')
@@ -64,3 +70,34 @@ def dump_flights(data: dict):
             create_flight(payload)
         else:
             update_flight(flight_created, payload)
+
+
+def get_kzt_conversion(eur: float) -> float:
+    """Получить эквивалент в тенге"""
+
+
+def _check_flight(data: dict):
+    try:
+        if data['flights_invalid'] and not data['flights_checked']:
+            raise APIException('Рейс не валидный. Обратитесь к администратуру.',
+                               code='400;INVALID_FLIGHT')
+        if data['price_change']:
+            raise APIException('Цена обновилась. Новая цена - ' +
+                               data['tickets_price'],
+                               code='203;NEW_PRICE')
+        total_price = data['total']
+    except KeyError as e:
+        error_msg = "can't decode response: " + str(e)
+        logger.critical(error_msg)
+        raise APIException(error_msg, code='500;DECODE_ERROR')
+    else:
+        return total_price
+
+
+def check_flight(data: dict):
+    """Проверяем валидность рейса"""
+    response_data = perform_request(settings.CHECK_FLIGHT_URL, params=data)
+    total = _check_flight(response_data)
+    return {'ok': True,
+            'detail': 'Бронирование одобрено!',
+            'total_price': str(total) + ' EUR'}

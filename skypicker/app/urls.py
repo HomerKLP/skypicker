@@ -11,8 +11,8 @@ urlpatterns = [
         name='flights'
     ),
     path(
-        'test/',
-        views.Test.as_view({'get': 'list'}),
-        name='flights'
-    ),
+        'check-flight/',
+        views.CheckFlightViewset.as_view({'get': 'get'}),
+        name='check-flight'
+    )
 ]

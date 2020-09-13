@@ -3,10 +3,15 @@ from celery.schedules import crontab
 from celery import shared_task
 from datetime import date, timedelta
 from celery.signals import celeryd_init
+from json.decoder import JSONDecodeError
+from django.conf import settings
 import requests
+import logging
 # Local
 from . import utils
 from skypicker.celery import app
+
+logger = logging.getLogger(__name__)
 
 
 @app.task
@@ -21,11 +26,15 @@ def load_flight(fly_from: str, fly_to: str):
         'date_to': (today + timedelta(days=30)).strftime('%d/%m/%Y')
     }
     r = requests.get(
-        'https://api.skypicker.com/flights',
+        settings.FLIGHTS_URL,
         params=params
     )
-    data = r.json()
-    utils.dump_flights(data['data'])
+    try:
+        data = r.json()
+    except JSONDecodeError as e:
+        logger.critical("can't decode response: " + str(e))
+    else:
+        utils.dump_flights(data['data'])
 
 
 @shared_task
@@ -49,6 +58,7 @@ def load_flights():
 
 @celeryd_init.connect
 def configure_workers(sender=None, conf=None, **kwargs):
+    """Загрузить все рейсы при старте celery"""
     load_flights.delay()
 
 

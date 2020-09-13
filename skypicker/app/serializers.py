@@ -22,3 +22,14 @@ class FlightSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
     airlines = AirlineSerializer(many=True)
+
+
+class CheckFlightSerializer(serializers.Serializer):
+    """Сериалайзер для проверки рейса"""
+    booking_token = serializers.CharField(required=True)
+    bnum = serializers.IntegerField(required=True, min_value=1)
+    pnum = serializers.IntegerField(required=True, min_value=1, max_value=9)
+    currency = serializers.CharField(required=False)
+    adults = serializers.IntegerField(required=False, min_value=1)
+    children = serializers.IntegerField(required=False, min_value=1)
+    infants = serializers.IntegerField(required=False, min_value=1)
