@@ -4,7 +4,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'ql)6+b-pv-r5)2ohfl)r!3)a$xk6o%6r)yed7+k*^%=!$%ls&j'
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -50,9 +50,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'skypicker.wsgi.application'
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": 'django.db.backends.postgresql_psycopg2',
+        "NAME": 'postgres',
+        "USER": 'postgres',
+        "PASSWORD": 'postgres',
+        "HOST": 'db',
+        "PORT": 5432,
     }
 }
 
@@ -91,13 +95,13 @@ CELERYD_CONCURRENCY = 3
 CELERY_RESULT_PERSISTENT = True
 BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
 BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
-CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/1'
+CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
 
 # Настройка кэша
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/1",
+        "LOCATION": "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/0",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
         },
@@ -112,4 +116,3 @@ REST_FRAMEWORK = {
         'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 100
 }
-

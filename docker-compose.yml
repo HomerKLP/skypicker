@@ -1,14 +1,6 @@
 version: '2.4'
 
 services:
-  web:
-    build: .
-    container_name: skypicker
-    mem_limit: 500m
-    restart: unless-stopped
-    ports:
-      - "8000:8000"
-
   redis:
     image: redis
     container_name: redis
@@ -16,8 +8,37 @@ services:
     ports:
       - "6379:6379"
 
+  db:
+    image: postgres
+    container_name: db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    container_name: skypicker
+    mem_limit: 500m
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
   celery:
     build: .
     container_name: celery
     mem_limit: 200m
     command: celery -A skypicker worker -l info -B --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    depends_on:
+      - db
+
+  migrations:
+    build: .
+    container_name: migrations
+    command: python manage.py migrate --noinput
+    depends_on:
+      - db

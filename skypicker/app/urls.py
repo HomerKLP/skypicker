@@ -10,4 +10,9 @@ urlpatterns = [
         views.SkyPickerViewset.as_view({'get': 'list'}),
         name='flights'
     ),
+    path(
+        'test/',
+        views.Test.as_view({'get': 'list'}),
+        name='flights'
+    ),
 ]
