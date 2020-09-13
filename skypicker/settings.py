@@ -126,3 +126,7 @@ REST_FRAMEWORK = {
 # Ext Api
 FLIGHTS_URL = 'https://api.skypicker.com/flights'
 CHECK_FLIGHT_URL = 'https://booking-api.skypicker.com/api/v0.1/check_flights'
+
+# Только для представления. По хорошему надо было создать таск
+# с нахождением актуальных курс валют
+EURO_TO_KZT = 505.87

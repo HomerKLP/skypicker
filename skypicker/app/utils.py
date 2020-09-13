@@ -94,10 +94,18 @@ def _check_flight(data: dict):
         return total_price
 
 
+def get_kzt_price(eur: float) -> dict:
+    """Получить дикт с мультивалютным прайсом"""
+    return {
+        'EUR': eur,
+        'KZT': round(settings.EURO_TO_KZT * eur)
+    }
+
+
 def check_flight(data: dict):
     """Проверяем валидность рейса"""
     response_data = perform_request(settings.CHECK_FLIGHT_URL, params=data)
     total = _check_flight(response_data)
     return {'ok': True,
             'detail': 'Бронирование одобрено!',
-            'total_price': str(total) + ' EUR'}
+            'total_price': get_kzt_price(total)}

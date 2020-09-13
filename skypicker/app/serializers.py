@@ -2,6 +2,7 @@
 from rest_framework import serializers
 # Local
 from .models import Flight, Airline
+from .utils import get_kzt_price
 
 
 class AirlineSerializer(serializers.ModelSerializer):
@@ -17,11 +18,16 @@ class FlightSerializer(serializers.ModelSerializer):
         model = Flight
         fields = ['id', 'external_id', 'departure_time', 'arrival_time',
                   'duration', 'city_from', 'city_code_from', 'city_to',
-                  'city_code_to', 'price', 'currency', 'booking_token',
+                  'city_code_to', 'price', 'booking_token',
                   'airlines']
         read_only_fields = fields
 
+    price = serializers.SerializerMethodField()
     airlines = AirlineSerializer(many=True)
+
+    def get_price(self, instance):
+        """Для получения мультивалютного прайса"""
+        return get_kzt_price(instance.price)
 
 
 class CheckFlightSerializer(serializers.Serializer):
